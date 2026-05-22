@@ -17,7 +17,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts && \
 
 # Copy custom entrypoint script to dynamically configure the Nginx listen port based on $PORT env var at startup
 COPY --chown=9999:9999 docker/99-set-nginx-port.sh /etc/entrypoint.d/99-set-nginx-port.sh
-RUN chmod +x /etc/entrypoint.d/99-set-nginx-port.sh
+RUN sed -i 's/\r$//' /etc/entrypoint.d/99-set-nginx-port.sh && \
+    chmod +x /etc/entrypoint.d/99-set-nginx-port.sh
 
 # Switch back to unprivileged user for secure runtime execution
 USER 9999

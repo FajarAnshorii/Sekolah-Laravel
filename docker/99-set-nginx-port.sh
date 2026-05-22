@@ -15,5 +15,3 @@ if [ -n "$PORT" ]; then
 else
     echo "No PORT environment variable defined, defaulting Nginx to port 8080"
 fi
-
-
