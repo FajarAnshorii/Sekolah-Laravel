@@ -1,13 +1,18 @@
 #!/bin/sh
 if [ -n "$PORT" ]; then
     echo "Dynamic PORT environment variable detected: $PORT"
-    # Target only specific configuration files containing the listen port to be extremely safe
-    for file in /etc/nginx/nginx.conf /etc/nginx/site-opts.d/http.conf /etc/nginx/site-opts.d/http.conf.template; do
-        if [ -f "$file" ]; then
-            echo "Updating Nginx port in $file..."
+    echo "Updating Nginx configuration files to listen on port $PORT..."
+    
+    # Find all files under /etc/nginx that contain '8080' and replace it with $PORT
+    find /etc/nginx -type f | while read -r file; do
+        if grep -q "8080" "$file"; then
+            echo "Replacing port 8080 with $PORT in $file"
             sed -i "s/8080/$PORT/g" "$file"
         fi
     done
+    
+    echo "Nginx port updates complete."
 else
     echo "No PORT environment variable defined, defaulting Nginx to port 8080"
 fi
+
