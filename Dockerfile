@@ -6,17 +6,17 @@ USER root
 # Set the working directory
 WORKDIR /var/www/html
 
-# Copy all application files with proper permissions using the numeric UID/GID for webuser
-COPY --chown=9999:9999 . /var/www/html
+# Copy all application files with proper permissions using the numeric UID/GID for www-data
+COPY --chown=www-data:www-data . /var/www/html
 
 # Install production dependencies, set web service permissions, and configure Nginx directories for non-root execution
 RUN composer install --no-dev --optimize-autoloader --no-scripts && \
-    chown -R 9999:9999 /var/www/html && \
-    docker-php-serversideup-set-file-permissions --owner 9999:9999 --service nginx && \
-    chown -R 9999:9999 /etc/nginx
+    chown -R www-data:www-data /var/www/html && \
+    docker-php-serversideup-set-file-permissions --owner www-data:www-data --service nginx && \
+    chown -R www-data:www-data /etc/nginx
 
 # Copy custom entrypoint script to dynamically configure the Nginx listen port based on $PORT env var at startup
-COPY --chown=9999:9999 docker/99-set-nginx-port.sh /etc/entrypoint.d/99-set-nginx-port.sh
+COPY --chown=www-data:www-data docker/99-set-nginx-port.sh /etc/entrypoint.d/99-set-nginx-port.sh
 RUN sed -i 's/\r$//' /etc/entrypoint.d/99-set-nginx-port.sh && \
     chmod +x /etc/entrypoint.d/99-set-nginx-port.sh
 
@@ -24,7 +24,7 @@ RUN sed -i 's/\r$//' /etc/entrypoint.d/99-set-nginx-port.sh && \
 EXPOSE 8080
 
 # Switch back to unprivileged user for secure runtime execution
-USER 9999
+USER www-data
 
 
 
