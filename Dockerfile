@@ -18,6 +18,3 @@ USER webuser
 # Install production dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Cache Laravel routes and views for optimal performance
-RUN php artisan route:cache && \
-    php artisan view:cache
