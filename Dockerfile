@@ -17,5 +17,10 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts && \
     chown -R 9999:9999 /var/www/html && \
     docker-php-serversideup-set-file-permissions --owner 9999:9999 --service nginx
 
+# Copy custom entrypoint script to dynamically configure the Nginx listen port based on $PORT env var at startup
+COPY --chown=9999:9999 docker/99-set-nginx-port.sh /etc/entrypoint.d/99-set-nginx-port.sh
+RUN chmod +x /etc/entrypoint.d/99-set-nginx-port.sh
+
 # Switch back to the unprivileged user for safe execution in restricted container environments like Railway
 USER 9999
+
