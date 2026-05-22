@@ -16,6 +16,32 @@ use Illuminate\Support\Facades\Auth;
 
 // ======= FRONTEND ======= \\
 
+Route::get('/buat-admin', function () {
+    try {
+        // Buat role Admin jika belum ada
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Admin']);
+        
+        $user = \App\Models\User::where('email', 'admin@gmail.com')->first();
+        if (!$user) {
+            $user = new \App\Models\User();
+            $user->name = 'Admin';
+            $user->username = 'admin';
+            $user->email = 'admin@gmail.com';
+        }
+        $user->role = 'Admin';
+        $user->status = 'Aktif';
+        $user->password = \Illuminate\Support\Facades\Hash::make('Bismillah');
+        $user->save();
+
+        // Assign role
+        $user->assignRole('Admin');
+
+        return 'Akun Admin berhasil dibuat/direset!<br>Email: <b>admin@gmail.com</b><br>Password: <b>Bismillah</b><br><br><a href="/login">Klik di sini untuk Login</a>';
+    } catch (\Exception $e) {
+        return 'Gagal membuat akun Admin: ' . $e->getMessage();
+    }
+});
+
 Route::get('/','Frontend\IndexController@index');
 
     ///// MENU \\\\\
