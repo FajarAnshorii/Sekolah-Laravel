@@ -1,0 +1,22 @@
+.git
+.github
+vendor
+node_modules
+npm-debug.log
+.env
+.env.*
+.phpunit.result.cache
+tests
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+Dockerfile
+.dockerignore
+Walkthrough.md
+task.md
+implementation_plan.md
+database.zip
+Sekolah-Laravel (1).zip
+sekolah-pintar-fixed.sql
+sekolah-pintar.sql
