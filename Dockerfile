@@ -20,6 +20,9 @@ COPY --chown=9999:9999 docker/99-set-nginx-port.sh /etc/entrypoint.d/99-set-ngin
 RUN sed -i 's/\r$//' /etc/entrypoint.d/99-set-nginx-port.sh && \
     chmod +x /etc/entrypoint.d/99-set-nginx-port.sh
 
+# Expose the unprivileged port Nginx listens on so Railway routes traffic correctly
+EXPOSE 8080
+
 # Switch back to unprivileged user for secure runtime execution
 USER 9999
 
