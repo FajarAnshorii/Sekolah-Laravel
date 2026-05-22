@@ -9,9 +9,6 @@ WORKDIR /var/www/html
 # Copy all application files with proper permissions using the numeric UID/GID for webuser
 COPY --chown=9999:9999 . /var/www/html
 
-# Expose port 8080
-EXPOSE 8080
-
 # Install production dependencies, set web service permissions, and configure Nginx directories for non-root execution
 RUN composer install --no-dev --optimize-autoloader --no-scripts && \
     chown -R 9999:9999 /var/www/html && \
@@ -21,6 +18,4 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts && \
 COPY --chown=9999:9999 docker/99-set-nginx-port.sh /etc/entrypoint.d/99-set-nginx-port.sh
 RUN chmod +x /etc/entrypoint.d/99-set-nginx-port.sh
 
-# Switch back to the unprivileged user for safe execution in restricted container environments like Railway
-USER 9999
 
