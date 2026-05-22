@@ -11,6 +11,7 @@ COPY --chown=www-data:www-data . /var/www/html
 
 # Install production dependencies, set web service permissions, and configure Nginx directories for non-root execution
 RUN composer install --no-dev --optimize-autoloader --no-scripts && \
+    php artisan storage:link && \
     chown -R www-data:www-data /var/www/html && \
     docker-php-serversideup-set-file-permissions --owner www-data:www-data --service nginx && \
     chown -R www-data:www-data /etc/nginx
