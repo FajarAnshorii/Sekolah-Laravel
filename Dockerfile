@@ -15,6 +15,3 @@ EXPOSE 8080
 # Install production dependencies as root, then ensure all files are owned by webuser using its numeric UID/GID (9999)
 RUN composer install --no-dev --optimize-autoloader --no-scripts && \
     chown -R 9999:9999 /var/www/html
-
-# Restore the default unprivileged user for the container
-USER 9999
