@@ -16,5 +16,6 @@ EXPOSE 8080
 USER webuser
 
 # Install production dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
 
