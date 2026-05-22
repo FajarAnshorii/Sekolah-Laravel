@@ -12,10 +12,6 @@ COPY --chown=webuser:webuser . /var/www/html
 # Expose port 8080
 EXPOSE 8080
 
-# Switch back to the non-root webuser
-USER webuser
-
-# Install production dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-
+# Install production dependencies as root, then ensure all files are owned by webuser
+RUN composer install --no-dev --optimize-autoloader --no-scripts && \
+    chown -R webuser:webuser /var/www/html
