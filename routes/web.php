@@ -42,6 +42,28 @@ Route::get('/buat-admin', function () {
     }
 });
 
+Route::get('/debug-db', function () {
+    try {
+        $users = \App\Models\User::all();
+        $output = "<h3>Daftar Pengguna (users):</h3><table border='1' cellpadding='5'><tr><th>Nama</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th></tr>";
+        foreach ($users as $u) {
+            $output .= "<tr><td>{$u->name}</td><td>{$u->username}</td><td>{$u->email}</td><td>{$u->role}</td><td>{$u->status}</td></tr>";
+        }
+        $output .= "</table>";
+
+        $mahasiswa = \App\Models\Mahasiswa::limit(5)->get();
+        $output .= "<h3>Daftar Mahasiswa (5 Sampel):</h3><table border='1' cellpadding='5'><tr><th>Nama</th><th>NIM</th><th>Email</th><th>Status</th></tr>";
+        foreach ($mahasiswa as $m) {
+            $output .= "<tr><td>{$m->nama}</td><td>{$m->nim}</td><td>{$m->email}</td><td>{$m->status}</td></tr>";
+        }
+        $output .= "</table>";
+        
+        return $output;
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
 Route::get('/','Frontend\IndexController@index');
 
     ///// MENU \\\\\
