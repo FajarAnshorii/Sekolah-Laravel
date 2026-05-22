@@ -6,12 +6,12 @@ USER root
 # Set the working directory
 WORKDIR /var/www/html
 
-# Copy all application files with proper permissions
-COPY --chown=webuser:webuser . /var/www/html
+# Copy all application files with proper permissions using the numeric UID/GID for webuser
+COPY --chown=9999:9999 . /var/www/html
 
 # Expose port 8080
 EXPOSE 8080
 
-# Install production dependencies as root, then ensure all files are owned by webuser
+# Install production dependencies as root, then ensure all files are owned by webuser using its numeric UID/GID (9999)
 RUN composer install --no-dev --optimize-autoloader --no-scripts && \
-    chown -R webuser:webuser /var/www/html
+    chown -R 9999:9999 /var/www/html
