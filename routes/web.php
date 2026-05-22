@@ -64,6 +64,29 @@ Route::get('/debug-db', function () {
     }
 });
 
+Route::get('/test-login', function () {
+    try {
+        $credentials = ['email' => 'admin@gmail.com', 'password' => 'Bismillah'];
+        $attempt = Auth::attempt($credentials);
+        $user = \App\Models\User::where('email', 'admin@gmail.com')->first();
+        
+        $hashCheck = false;
+        if ($user) {
+            $hashCheck = \Illuminate\Support\Facades\Hash::check('Bismillah', $user->password);
+        }
+        
+        return [
+            'attempt_result' => $attempt,
+            'user_found' => !is_null($user),
+            'user_status' => $user ? $user->status : null,
+            'hash_check' => $hashCheck,
+            'current_hash' => $user ? $user->password : null,
+        ];
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
 Route::get('/','Frontend\IndexController@index');
 
     ///// MENU \\\\\
