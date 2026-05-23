@@ -11,7 +11,12 @@ class MahasiswaController extends Controller
 {
     public function index(Request $request)
     {
-        $kelas_options = Mahasiswa::distinct()->pluck('kelas')->filter()->toArray();
+        $kelas_options = $this->getKelasOptions();
+        
+        // Merge with any other distinct classes in DB just in case
+        $db_kelas = Mahasiswa::distinct()->pluck('kelas')->filter()->toArray();
+        $kelas_options = array_values(array_unique(array_merge($kelas_options, $db_kelas)));
+
         $selected_kelas = $request->get('kelas');
 
         $query = Mahasiswa::query();
@@ -25,7 +30,9 @@ class MahasiswaController extends Controller
 
     public function create()
     {
-        return view('backend.pengguna.mahasiswa.create');
+        $kelas_options = $this->getKelasOptions();
+        $prodi_options = $this->getProdiOptions();
+        return view('backend.pengguna.mahasiswa.create', compact('kelas_options', 'prodi_options'));
     }
 
     public function store(Request $request)
@@ -56,7 +63,9 @@ class MahasiswaController extends Controller
     public function edit($id)
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
-        return view('backend.pengguna.mahasiswa.edit', compact('mahasiswa'));
+        $kelas_options = $this->getKelasOptions();
+        $prodi_options = $this->getProdiOptions();
+        return view('backend.pengguna.mahasiswa.edit', compact('mahasiswa', 'kelas_options', 'prodi_options'));
     }
 
     public function update(Request $request, $id)
@@ -93,5 +102,52 @@ class MahasiswaController extends Controller
 
         Session::flash('success', 'Mahasiswa Berhasil dihapus !');
         return redirect()->route('backend-pengguna-mahasiswa.index');
+    }
+
+    protected function getKelasOptions()
+    {
+        return [
+            // S1 Keperawatan (Current seeded)
+            'Kelas 1',
+            'Kelas 2',
+            
+            // Profesi Ners
+            'Profesi Ners',
+            
+            // S1 Keperawatan (Planned)
+            'S1 Keperawatan - Tingkat 1 A',
+            'S1 Keperawatan - Tingkat 1 B',
+            'S1 Keperawatan - Tingkat 1 C',
+            'S1 Keperawatan - Tingkat 1 D',
+            'S1 Keperawatan - Tingkat 2 A',
+            'S1 Keperawatan - Tingkat 2 B',
+            'S1 Keperawatan - Tingkat 2 C',
+            'S1 Keperawatan - Tingkat 3 A',
+            'S1 Keperawatan - Tingkat 3 B',
+            
+            // D3 Keperawatan
+            'D3 Keperawatan - Tingkat 1',
+            'D3 Keperawatan - Tingkat 2 A',
+            'D3 Keperawatan - Tingkat 2 B',
+            'D3 Keperawatan - Tingkat 3',
+            
+            // D4 MIK
+            'D4 MIK',
+            
+            // S1 Gizi
+            'S1 Gizi'
+        ];
+    }
+
+    protected function getProdiOptions()
+    {
+        return [
+            'S1 Keperawatan' => 'S1 Keperawatan',
+            'Profesi Ners' => 'Profesi Ners',
+            'D3 Keperawatan' => 'D3 Keperawatan',
+            'D4 MIK' => 'D4 MIK',
+            'S1 Gizi' => 'S1 Gizi',
+            'Teknik Informatika' => 'Teknik Informatika' // support existing
+        ];
     }
 }

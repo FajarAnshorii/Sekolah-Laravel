@@ -55,10 +55,9 @@
                                         <label for="program_studi">Program Studi <span class="text-danger">*</span></label>
                                         <select id="program_studi" class="form-control @error('program_studi') is-invalid @enderror" name="program_studi" required>
                                             <option value="">-- Pilih Program Studi --</option>
-                                            <option value="Teknik Informatika" {{ old('program_studi') == 'Teknik Informatika' ? 'selected' : '' }}>Teknik Informatika</option>
-                                            <option value="Sistem Informasi" {{ old('program_studi') == 'Sistem Informasi' ? 'selected' : '' }}>Sistem Informasi</option>
-                                            <option value="Teknik Komputer" {{ old('program_studi') == 'Teknik Komputer' ? 'selected' : '' }}>Teknik Komputer</option>
-                                            <option value="Rekayasa Perangkat Lunak" {{ old('program_studi') == 'Rekayasa Perangkat Lunak' ? 'selected' : '' }}>Rekayasa Perangkat Lunak</option>
+                                            @foreach($prodi_options as $key => $val)
+                                                <option value="{{ $key }}" {{ old('program_studi') == $key ? 'selected' : '' }}>{{ $val }}</option>
+                                            @endforeach
                                         </select>
                                         @error('program_studi')
                                             <span class="invalid-feedback" role="alert">
@@ -71,7 +70,12 @@
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
                                         <label for="kelas">Kelas <span class="text-danger">*</span></label>
-                                        <input type="text" id="kelas" class="form-control @error('kelas') is-invalid @enderror" name="kelas" value="{{ old('kelas') }}" placeholder="Contoh: TI 2022 A" required />
+                                        <select id="kelas" class="form-control @error('kelas') is-invalid @enderror" name="kelas" required>
+                                            <option value="">-- Pilih Kelas --</option>
+                                            @foreach($kelas_options as $opt)
+                                                <option value="{{ $opt }}" {{ old('kelas') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                            @endforeach
+                                        </select>
                                         @error('kelas')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
