@@ -136,10 +136,6 @@ class MahasiswaController extends Controller
             ],
             'S1 Gizi' => [
                 'S1 Gizi'
-            ],
-            'Teknik Informatika' => [
-                'Kelas 1',
-                'Kelas 2'
             ]
         ];
     }
