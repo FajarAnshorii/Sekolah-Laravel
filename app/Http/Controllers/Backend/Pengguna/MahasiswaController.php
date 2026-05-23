@@ -11,28 +11,31 @@ class MahasiswaController extends Controller
 {
     public function index(Request $request)
     {
-        $kelas_options = $this->getKelasOptions();
-        
-        // Merge with any other distinct classes in DB just in case
-        $db_kelas = Mahasiswa::distinct()->pluck('kelas')->filter()->toArray();
-        $kelas_options = array_values(array_unique(array_merge($kelas_options, $db_kelas)));
-
+        $prodi_kelas_map = $this->getProdiKelasMap();
+        $selected_prodi = $request->get('program_studi');
         $selected_kelas = $request->get('kelas');
 
         $query = Mahasiswa::query();
+        if ($selected_prodi) {
+            $query->where('program_studi', $selected_prodi);
+        }
         if ($selected_kelas) {
             $query->where('kelas', $selected_kelas);
         }
         $mahasiswa = $query->get();
 
-        return view('backend.pengguna.mahasiswa.index', compact('mahasiswa', 'kelas_options', 'selected_kelas'));
+        return view('backend.pengguna.mahasiswa.index', compact(
+            'mahasiswa', 
+            'prodi_kelas_map', 
+            'selected_prodi', 
+            'selected_kelas'
+        ));
     }
 
     public function create()
     {
-        $kelas_options = $this->getKelasOptions();
-        $prodi_options = $this->getProdiOptions();
-        return view('backend.pengguna.mahasiswa.create', compact('kelas_options', 'prodi_options'));
+        $prodi_kelas_map = $this->getProdiKelasMap();
+        return view('backend.pengguna.mahasiswa.create', compact('prodi_kelas_map'));
     }
 
     public function store(Request $request)
@@ -63,9 +66,8 @@ class MahasiswaController extends Controller
     public function edit($id)
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
-        $kelas_options = $this->getKelasOptions();
-        $prodi_options = $this->getProdiOptions();
-        return view('backend.pengguna.mahasiswa.edit', compact('mahasiswa', 'kelas_options', 'prodi_options'));
+        $prodi_kelas_map = $this->getProdiKelasMap();
+        return view('backend.pengguna.mahasiswa.edit', compact('mahasiswa', 'prodi_kelas_map'));
     }
 
     public function update(Request $request, $id)
@@ -104,50 +106,41 @@ class MahasiswaController extends Controller
         return redirect()->route('backend-pengguna-mahasiswa.index');
     }
 
-    protected function getKelasOptions()
+    protected function getProdiKelasMap()
     {
         return [
-            // S1 Keperawatan (Current seeded)
-            'Kelas 1',
-            'Kelas 2',
-            
-            // Profesi Ners
-            'Profesi Ners',
-            
-            // S1 Keperawatan (Planned)
-            'S1 Keperawatan - Tingkat 1 A',
-            'S1 Keperawatan - Tingkat 1 B',
-            'S1 Keperawatan - Tingkat 1 C',
-            'S1 Keperawatan - Tingkat 1 D',
-            'S1 Keperawatan - Tingkat 2 A',
-            'S1 Keperawatan - Tingkat 2 B',
-            'S1 Keperawatan - Tingkat 2 C',
-            'S1 Keperawatan - Tingkat 3 A',
-            'S1 Keperawatan - Tingkat 3 B',
-            
-            // D3 Keperawatan
-            'D3 Keperawatan - Tingkat 1',
-            'D3 Keperawatan - Tingkat 2 A',
-            'D3 Keperawatan - Tingkat 2 B',
-            'D3 Keperawatan - Tingkat 3',
-            
-            // D4 MIK
-            'D4 MIK',
-            
-            // S1 Gizi
-            'S1 Gizi'
-        ];
-    }
-
-    protected function getProdiOptions()
-    {
-        return [
-            'S1 Keperawatan' => 'S1 Keperawatan',
-            'Profesi Ners' => 'Profesi Ners',
-            'D3 Keperawatan' => 'D3 Keperawatan',
-            'D4 MIK' => 'D4 MIK',
-            'S1 Gizi' => 'S1 Gizi',
-            'Teknik Informatika' => 'Teknik Informatika' // support existing
+            'S1 Keperawatan' => [
+                'Kelas 1',
+                'Kelas 2',
+                'Tingkat 1 A',
+                'Tingkat 1 B',
+                'Tingkat 1 C',
+                'Tingkat 1 D',
+                'Tingkat 2 A',
+                'Tingkat 2 B',
+                'Tingkat 2 C',
+                'Tingkat 3 A',
+                'Tingkat 3 B'
+            ],
+            'Profesi Ners' => [
+                'Profesi Ners'
+            ],
+            'D3 Keperawatan' => [
+                'Tingkat 1',
+                'Tingkat 2 A',
+                'Tingkat 2 B',
+                'Tingkat 3'
+            ],
+            'D4 MIK' => [
+                'D4 MIK'
+            ],
+            'S1 Gizi' => [
+                'S1 Gizi'
+            ],
+            'Teknik Informatika' => [
+                'Kelas 1',
+                'Kelas 2'
+            ]
         ];
     }
 }

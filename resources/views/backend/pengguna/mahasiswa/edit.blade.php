@@ -56,8 +56,8 @@
                                         <label for="program_studi">Program Studi <span class="text-danger">*</span></label>
                                         <select id="program_studi" class="form-control @error('program_studi') is-invalid @enderror" name="program_studi" required>
                                             <option value="">-- Pilih Program Studi --</option>
-                                            @foreach($prodi_options as $key => $val)
-                                                <option value="{{ $key }}" {{ old('program_studi', $mahasiswa->program_studi) == $key ? 'selected' : '' }}>{{ $val }}</option>
+                                            @foreach(array_keys($prodi_kelas_map) as $prodi)
+                                                <option value="{{ $prodi }}" {{ old('program_studi', $mahasiswa->program_studi) == $prodi ? 'selected' : '' }}>{{ $prodi }}</option>
                                             @endforeach
                                         </select>
                                         @error('program_studi')
@@ -73,9 +73,6 @@
                                         <label for="kelas">Kelas <span class="text-danger">*</span></label>
                                         <select id="kelas" class="form-control @error('kelas') is-invalid @enderror" name="kelas" required>
                                             <option value="">-- Pilih Kelas --</option>
-                                            @foreach($kelas_options as $opt)
-                                                <option value="{{ $opt }}" {{ old('kelas', $mahasiswa->kelas) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                                            @endforeach
                                         </select>
                                         @error('kelas')
                                             <span class="invalid-feedback" role="alert">
@@ -227,4 +224,37 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var map = @json($prodi_kelas_map);
+        var prodiSelect = document.getElementById('program_studi');
+        var kelasSelect = document.getElementById('kelas');
+        
+        var selectedKelas = "{{ old('kelas', $mahasiswa->kelas) }}";
+
+        function updateKelasOptions() {
+            var val = prodiSelect.value;
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            
+            if (val && map[val]) {
+                map[val].forEach(function(k) {
+                    var option = document.createElement('option');
+                    option.value = k;
+                    option.textContent = k;
+                    if (k === selectedKelas) {
+                        option.selected = true;
+                    }
+                    kelasSelect.appendChild(option);
+                });
+            }
+        }
+
+        prodiSelect.addEventListener('change', function() {
+            selectedKelas = ''; // Reset on change
+            updateKelasOptions();
+        });
+        
+        updateKelasOptions();
+    });
+</script>
 @endsection

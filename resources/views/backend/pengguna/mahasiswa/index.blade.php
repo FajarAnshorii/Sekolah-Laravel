@@ -38,17 +38,23 @@
                 <form method="GET" action="{{ route('backend-pengguna-mahasiswa.index') }}">
                     <div class="row align-items-end">
                         <div class="col-md-4 col-12 mb-1 mb-md-0">
+                            <label for="filter-prodi" class="font-weight-bold">Program Studi</label>
+                            <select id="filter-prodi" name="program_studi" class="form-control">
+                                <option value="">-- Semua Program Studi --</option>
+                                @foreach (array_keys($prodi_kelas_map) as $prodi)
+                                    <option value="{{ $prodi }}" {{ $selected_prodi == $prodi ? 'selected' : '' }}>{{ $prodi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-12 mb-1 mb-md-0">
                             <label for="filter-kelas" class="font-weight-bold">Kategori Kelas</label>
                             <select id="filter-kelas" name="kelas" class="form-control">
                                 <option value="">-- Semua Kelas --</option>
-                                @foreach ($kelas_options as $opt)
-                                    <option value="{{ $opt }}" {{ $selected_kelas == $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 col-12">
                             <button type="submit" class="btn btn-primary mr-1"><i data-feather="filter" class="mr-50"></i> Filter</button>
-                            @if($selected_kelas)
+                            @if($selected_prodi || $selected_kelas)
                                 <a href="{{ route('backend-pengguna-mahasiswa.index') }}" class="btn btn-outline-secondary"><i data-feather="x" class="mr-50"></i> Reset</a>
                             @endif
                         </div>
@@ -154,4 +160,57 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var map = @json($prodi_kelas_map);
+        var prodiSelect = document.getElementById('filter-prodi');
+        var kelasSelect = document.getElementById('filter-kelas');
+        
+        var selectedProdi = "{{ $selected_prodi }}";
+        var selectedKelas = "{{ $selected_kelas }}";
+
+        function updateKelasOptions() {
+            var val = prodiSelect.value;
+            kelasSelect.innerHTML = '<option value="">-- Semua Kelas --</option>';
+            
+            if (val && map[val]) {
+                map[val].forEach(function(k) {
+                    var option = document.createElement('option');
+                    option.value = k;
+                    option.textContent = k;
+                    if (k === selectedKelas) {
+                        option.selected = true;
+                    }
+                    kelasSelect.appendChild(option);
+                });
+            } else {
+                // Populate all unique classes from all prodis as a general fallback
+                var allUnique = [];
+                for (var key in map) {
+                    map[key].forEach(function(k) {
+                        if (allUnique.indexOf(k) === -1) {
+                            allUnique.push(k);
+                        }
+                    });
+                }
+                allUnique.sort().forEach(function(k) {
+                    var option = document.createElement('option');
+                    option.value = k;
+                    option.textContent = k;
+                    if (k === selectedKelas) {
+                        option.selected = true;
+                    }
+                    kelasSelect.appendChild(option);
+                });
+            }
+        }
+
+        prodiSelect.addEventListener('change', function() {
+            selectedKelas = ''; // Reset selected kelas when prodi changes
+            updateKelasOptions();
+        });
+        
+        updateKelasOptions();
+    });
+</script>
 @endsection
