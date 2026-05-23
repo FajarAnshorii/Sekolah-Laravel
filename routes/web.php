@@ -42,6 +42,17 @@ Route::get('/buat-admin', function () {
     }
 });
 
+Route::get('/update-prodi', function () {
+    try {
+        $count = \App\Models\Mahasiswa::where('program_studi', 'Teknik Informatika')
+            ->orWhereIn('kelas', ['Kelas 1', 'Kelas 2'])
+            ->update(['program_studi' => 'S1 Keperawatan']);
+        return "Berhasil memperbarui {$count} data mahasiswa dari Teknik Informatika menjadi S1 Keperawatan!<br><br><a href='/home'>Kembali ke Dashboard</a>";
+    } catch (\Exception $e) {
+        return "Gagal memperbarui data: " . $e->getMessage();
+    }
+});
+
 Route::get('/debug-db', function () {
     try {
         $users = \App\Models\User::all();

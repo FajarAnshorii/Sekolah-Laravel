@@ -73,7 +73,7 @@ class MahasiswaKelas2Seeder extends Seeder
             Mahasiswa::create([
                 'nama'          => $data['nama'],
                 'nim'           => $data['nim'],
-                'program_studi' => 'Teknik Informatika',
+                'program_studi' => 'S1 Keperawatan',
                 'kelas'         => 'Kelas 2',
                 'email'         => strtolower(str_replace(['\'', ' ', '/'], ['', '.', ''], $data['nim'])) . '@student.ac.id',
                 'no_hp'         => null,
