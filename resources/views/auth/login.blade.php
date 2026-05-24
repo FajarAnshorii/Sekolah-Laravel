@@ -70,6 +70,40 @@
             font-weight: 600;
         }
 
+        /* BACK BUTTON GLASS EFFECT */
+        .btn-back-home {
+            height: 48px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back-home:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.6);
+            color: #fff;
+        }
+
+        /* CARD HOVER COMPATIBILITY */
+        .login-card:hover .btn-back-home {
+            border-color: #6c757d;
+            color: #495057;
+            background: transparent;
+        }
+
+        .login-card:hover .btn-back-home:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #212529;
+            border-color: #343a40;
+        }
+
         /* ANIMASI MASUK */
         .login-card {
             animation: fadeZoom 0.8s ease;
@@ -135,9 +169,12 @@
                     @enderror
                 </div>
 
-                <button class="btn btn-primary w-100">
+                <button class="btn btn-primary w-100 mb-2">
                     Masuk
                 </button>
+                <a href="{{ url('/') }}" class="btn-back-home w-100">
+                    Kembali ke Halaman Utama
+                </a>
             </form>
 
             <p class="text-center mt-4 mb-0 small">
