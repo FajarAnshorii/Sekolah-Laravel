@@ -151,9 +151,34 @@ class PortalMahasiswaController extends Controller
             'no_hp' => 'nullable|string|max:20',
             'nim' => 'required|string|max:50|unique:mahasiswas,nim,' . $studentId,
             'foto_profile' => 'nullable|image|max:2048|mimes:jpg,jpeg,png',
+            'cropped_image' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('foto_profile')) {
+        if ($request->filled('cropped_image')) {
+            // Delete old file if exists
+            if ($student->foto_profile) {
+                \Illuminate\Support\Facades\Storage::delete('public/images/profile/' . $student->foto_profile);
+            }
+            
+            $data = $request->cropped_image;
+            // Base64 format: data:image/jpeg;base64,.....
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]); // jpg, png, jpeg
+                
+                if ($type === 'jpeg') {
+                    $type = 'jpg';
+                }
+                
+                $data = base64_decode($data);
+                
+                if ($data !== false) {
+                    $fileName = time() . '_' . uniqid() . '.' . $type;
+                    \Illuminate\Support\Facades\Storage::put('public/images/profile/' . $fileName, $data);
+                    $student->foto_profile = $fileName;
+                }
+            }
+        } elseif ($request->hasFile('foto_profile')) {
             // Delete old file if exists
             if ($student->foto_profile) {
                 \Illuminate\Support\Facades\Storage::delete('public/images/profile/' . $student->foto_profile);

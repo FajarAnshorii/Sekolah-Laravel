@@ -3,6 +3,8 @@
 @section('title', 'Pengaturan Profil')
 
 @section('styles')
+<!-- Cropper.js CSS CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
 <style>
     .portal-form-block {
         background: #ffffff;
@@ -186,6 +188,12 @@
         font-weight: 700;
         color: var(--text-dark);
     }
+
+    /* Modal Cropping Styles */
+    .cropper-container {
+        border-radius: 8px;
+        overflow: hidden;
+    }
 </style>
 @endsection
 
@@ -235,6 +243,9 @@
                     @csrf
                     @method('PUT')
 
+                    <!-- Hidden Input to store cropped base64 image data -->
+                    <input type="hidden" name="cropped_image" id="cropped_image">
+
                     <div class="row">
                         <!-- NAMA -->
                         <div class="col-md-6 form-group mb-4">
@@ -281,10 +292,10 @@
                         <div class="col-12 form-group mb-4">
                             <label for="foto_profile">Foto Profil</label>
                             <div class="custom-file">
-                                <input type="file" name="foto_profile" id="foto_profile" class="custom-file-input @error('foto_profile') is-invalid @enderror">
+                                <input type="file" name="foto_profile" id="foto_profile" class="custom-file-input @error('foto_profile') is-invalid @enderror" accept="image/*">
                                 <label class="custom-file-label" for="foto_profile">Pilih foto profil baru...</label>
                             </div>
-                            <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i>Format yang diizinkan: <strong>JPG, JPEG, PNG</strong> (Maksimal 2 MB)</small>
+                            <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i>Pilih foto, kemudian lakukan penyesuaian (*crop*) ukuran. Format: <strong>JPG, JPEG, PNG</strong> (Maksimal 2 MB)</small>
                             @error('foto_profile')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -305,14 +316,108 @@
         </div>
     </div>
 
+    <!-- CROP MODAL -->
+    <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <div class="modal-header bg-light border-bottom py-3">
+                    <h5 class="modal-title font-weight-bold" id="cropModalLabel" style="color: var(--text-dark);"><i class="fas fa-crop-alt mr-2 text-primary"></i>Sesuaikan Foto Profil</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="d-flex justify-content-center align-items-center" style="max-height: 400px; background-color: #000; border-radius: 12px; overflow: hidden;">
+                        <img id="image-to-crop" style="max-width: 100%; max-height: 400px; display: block;">
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-3">
+                    <button type="button" class="btn btn-secondary font-weight-bold" data-dismiss="modal" style="border-radius: 8px; padding: 0.5rem 1.2rem;">Batal</button>
+                    <button type="button" class="btn btn-primary font-weight-bold" id="btn-crop-apply" style="border-radius: 8px; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #7367f0 0%, #8c52ff 100%); border: none; box-shadow: 0 4px 10px rgba(115,103,240,0.25);">Potong & Terapkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
+<!-- Cropper.js JS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
-    document.getElementById('foto_profile').addEventListener('change', function (e) {
-        var name = e.target.files[0].name;
-        var label = e.target.nextElementSibling;
-        label.innerText = name;
+    var cropper;
+    var imageToCrop = document.getElementById('image-to-crop');
+    var cropModal = $('#cropModal');
+    var fileInput = document.getElementById('foto_profile');
+
+    fileInput.addEventListener('change', function (e) {
+        var files = e.target.files;
+        if (files && files.length > 0) {
+            var file = files[0];
+            
+            // Validate size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File terlalu besar! Ukuran maksimal adalah 2 MB.');
+                e.target.value = '';
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imageToCrop.src = e.target.result;
+                cropModal.modal('show');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    cropModal.on('shown.bs.modal', function () {
+        cropper = new Cropper(imageToCrop, {
+            aspectRatio: 1,
+            viewMode: 1,
+            dragMode: 'move',
+            autoCropArea: 1,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false
+        });
+    }).on('hidden.bs.modal', function () {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        // Reset file input so same file can trigger change event again if cancelled
+        fileInput.value = '';
+    });
+
+    document.getElementById('btn-crop-apply').addEventListener('click', function () {
+        if (cropper) {
+            var canvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300
+            });
+            
+            var base64Image = canvas.toDataURL('image/jpeg');
+            document.getElementById('cropped_image').value = base64Image;
+            
+            // Update preview on the left side
+            var previewImg = document.querySelector('.profile-card-static img');
+            if (previewImg) {
+                previewImg.src = base64Image;
+            }
+            
+            // Update custom file label
+            var label = document.querySelector('.custom-file-label');
+            if (label) {
+                label.innerText = 'Foto profil baru siap diterapkan';
+            }
+            
+            cropModal.modal('hide');
+        }
     });
 </script>
 @endsection
