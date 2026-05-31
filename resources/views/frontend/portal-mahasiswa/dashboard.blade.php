@@ -593,12 +593,23 @@
 
     <!-- WELCOME ALERT CARD -->
     <div class="welcome-card">
-        <h2>Selamat Datang, {{ $student->nama }}!</h2>
-        <p class="subtitle">{{ $student->program_studi }} - {{ $student->kelas }}</p>
-        <div class="welcome-details">
-            <span><i class="fas fa-envelope"></i> {{ $student->email }}</span>
-            <span><i class="fas fa-phone"></i> {{ $student->no_hp ?? '-' }}</span>
-            <span class="status-badge-aktif"><i class="fas fa-circle" style="font-size: 0.6rem;"></i> {{ ucfirst($student->status) }}</span>
+        <div class="d-flex align-items-center justify-content-between flex-wrap" style="gap: 20px;">
+            <div>
+                <h2>Selamat Datang, {{ $student->nama }}!</h2>
+                <p class="subtitle">{{ $student->program_studi }} - {{ $student->kelas }}</p>
+                <div class="welcome-details">
+                    <span><i class="fas fa-envelope"></i> {{ $student->email }}</span>
+                    <span><i class="fas fa-phone"></i> {{ $student->no_hp ?? '-' }}</span>
+                    <span class="status-badge-aktif"><i class="fas fa-circle" style="font-size: 0.6rem;"></i> {{ ucfirst($student->status) }}</span>
+                </div>
+            </div>
+            <div>
+                @if ($student->foto_profile)
+                    <img class="rounded-circle border border-white p-1 bg-white" src="{{ asset('storage/images/profile/' . $student->foto_profile) }}" alt="foto profile" height="110" width="110" style="object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                @else
+                    <img class="rounded-circle border border-white p-1 bg-white" src="{{ asset('Assets/Backend/images/user.png') }}" alt="avatar default" height="110" width="110" style="object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                @endif
+            </div>
         </div>
     </div>
 

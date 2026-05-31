@@ -19,6 +19,7 @@ class Mahasiswa extends Model
         'email',
         'no_hp',
         'status',
+        'foto_profile',
         'k1',
         'k2',
         'k3',

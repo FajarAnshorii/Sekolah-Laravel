@@ -256,8 +256,12 @@
                                     <div class="rank-crown">🥉</div>
                                 @endif
                                 
-                                <div class="avatar-container">
-                                    {{ $initials }}
+                                <div class="avatar-container" style="overflow: hidden; padding: 0;">
+                                    @if($student->foto_profile)
+                                        <img src="{{ asset('storage/images/profile/' . $student->foto_profile) }}" alt="{{ $student->nama }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    @else
+                                        {{ $initials }}
+                                    @endif
                                 </div>
                             </div>
                             

@@ -206,6 +206,13 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="profile-card-static">
+                    <div class="text-center mb-3">
+                        @if ($student->foto_profile)
+                            <img class="rounded-circle border border-primary p-1 bg-white" src="{{ asset('storage/images/profile/' . $student->foto_profile) }}" alt="foto profile" height="150" width="150" style="object-fit: cover; box-shadow: 0 4px 15px rgba(115, 103, 240, 0.15);">
+                        @else
+                            <img class="rounded-circle border border-primary p-1 bg-white" src="{{ asset('Assets/Backend/images/user.png') }}" alt="avatar default" height="150" width="150" style="object-fit: cover; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+                        @endif
+                    </div>
                     <h5><i class="fas fa-university"></i> Detail Akademik</h5>
                     <div class="profile-card-static-item">
                         <span class="profile-card-static-label">Program Studi</span>
@@ -224,7 +231,7 @@
 
             <div class="col-lg-8">
                 <!-- FORM -->
-                <form action="{{ route('portal-mahasiswa.profile.update') }}" method="POST">
+                <form action="{{ route('portal-mahasiswa.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -269,6 +276,21 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <!-- FOTO PROFILE -->
+                        <div class="col-12 form-group mb-4">
+                            <label for="foto_profile">Foto Profil</label>
+                            <div class="custom-file">
+                                <input type="file" name="foto_profile" id="foto_profile" class="custom-file-input @error('foto_profile') is-invalid @enderror">
+                                <label class="custom-file-label" for="foto_profile">Pilih foto profil baru...</label>
+                            </div>
+                            <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i>Format yang diizinkan: <strong>JPG, JPEG, PNG</strong> (Maksimal 2 MB)</small>
+                            @error('foto_profile')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- ACTIONS FOOTER -->
                     <div class="form-actions-footer">
                         <button type="submit" class="btn-portal-submit">
@@ -283,4 +305,14 @@
         </div>
     </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    document.getElementById('foto_profile').addEventListener('change', function (e) {
+        var name = e.target.files[0].name;
+        var label = e.target.nextElementSibling;
+        label.innerText = name;
+    });
+</script>
 @endsection

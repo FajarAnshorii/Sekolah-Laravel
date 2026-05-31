@@ -150,7 +150,19 @@ class PortalMahasiswaController extends Controller
             'email' => 'required|email|max:255|unique:mahasiswas,email,' . $studentId,
             'no_hp' => 'nullable|string|max:20',
             'nim' => 'required|string|max:50|unique:mahasiswas,nim,' . $studentId,
+            'foto_profile' => 'nullable|image|max:2048|mimes:jpg,jpeg,png',
         ]);
+
+        if ($request->hasFile('foto_profile')) {
+            // Delete old file if exists
+            if ($student->foto_profile) {
+                \Illuminate\Support\Facades\Storage::delete('public/images/profile/' . $student->foto_profile);
+            }
+            $file = $request->file('foto_profile');
+            $fileName = time() . "_" . str_replace(' ', '_', $file->getClientOriginalName());
+            $file->storeAs('public/images/profile', $fileName);
+            $student->foto_profile = $fileName;
+        }
 
         $student->nama = $request->nama;
         $student->email = $request->email;
