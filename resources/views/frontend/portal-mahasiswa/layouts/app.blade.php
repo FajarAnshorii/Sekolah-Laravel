@@ -673,6 +673,11 @@
                             <i class="fas fa-briefcase"></i> Portofolio
                         </a>
                     </li>
+                    <li class="portal-nav-item {{ Route::is('portal-mahasiswa.profile') ? 'active' : '' }}">
+                        <a class="portal-nav-link" href="{{ route('portal-mahasiswa.profile') }}">
+                            <i class="fas fa-user-cog"></i> Profil
+                        </a>
+                    </li>
                 </ul>
                 
                 <div class="navbar-nav ml-auto">
@@ -712,6 +717,7 @@
                         <li><a href="{{ route('portal-mahasiswa.sertifikat.index') }}"><i class="fas fa-chevron-right fa-xs mr-2 text-primary"></i> Sertifikat</a></li>
                         <li><a href="{{ route('portal-mahasiswa.perlombaan.index') }}"><i class="fas fa-chevron-right fa-xs mr-2 text-primary"></i> Perlombaan</a></li>
                         <li><a href="{{ route('portal-mahasiswa.portofolio.index') }}"><i class="fas fa-chevron-right fa-xs mr-2 text-primary"></i> Portofolio</a></li>
+                        <li><a href="{{ route('portal-mahasiswa.profile') }}"><i class="fas fa-chevron-right fa-xs mr-2 text-primary"></i> Profil</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-6">

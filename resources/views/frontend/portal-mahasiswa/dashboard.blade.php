@@ -594,7 +594,7 @@
     <!-- WELCOME ALERT CARD -->
     <div class="welcome-card">
         <h2>Selamat Datang, {{ $student->nama }}!</h2>
-        <p class="subtitle">NIM. {{ $student->nim }} | {{ $student->program_studi }} - {{ $student->kelas }}</p>
+        <p class="subtitle">{{ $student->program_studi }} - {{ $student->kelas }}</p>
         <div class="welcome-details">
             <span><i class="fas fa-envelope"></i> {{ $student->email }}</span>
             <span><i class="fas fa-phone"></i> {{ $student->no_hp ?? '-' }}</span>

@@ -79,7 +79,6 @@
                                 Daftar Siswa — <span class="badge badge-light-primary">{{ $kelas }}</span>
                                 <span class="text-muted font-small-3 ml-50">{{ \Carbon\Carbon::parse($selected_tanggal)->translatedFormat('l, d F Y') }}</span>
                             </h4>
-                            <small class="text-muted">Distribusi poin: Hadir <span class="badge badge-success">+5</span>, Sakit <span class="badge badge-info">+3</span>, Izin <span class="badge badge-warning">+2</span>, Alfa <span class="badge badge-danger">0</span></small>
                         </div>
                         <div class="d-flex align-items-center mt-1 mt-md-0">
                             {{-- Quick select buttons --}}
@@ -111,10 +110,6 @@
                                 <span class="font-weight-bolder text-danger font-medium-2" id="count-alfa">0</span>
                                 <small class="d-block text-muted">Alfa</small>
                             </div>
-                            <div class="col">
-                                <span class="font-weight-bolder text-success font-medium-2" id="count-poin">0</span>
-                                <small class="d-block text-muted">Total Poin Absensi</small>
-                            </div>
                         </div>
                     </div>
 
@@ -127,7 +122,6 @@
                                         <th>Nama Mahasiswa</th>
                                         <th>NIM</th>
                                         <th class="text-center" style="width:320px;">Status Kehadiran</th>
-                                        <th class="text-center" style="width:80px;">Poin</th>
                                         <th style="width:200px;">Keterangan</th>
                                     </tr>
                                 </thead>
@@ -159,15 +153,6 @@
                                                         data-value="Tidak Hadir" style="font-size:11px;padding:3px 8px;">✗ Alfa</button>
                                                 </div>
                                                 <input type="hidden" name="absensi[{{ $key }}][status]" id="status-{{ $key }}" value="{{ $currentStatus }}">
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                <span class="badge badge-warning poin-badge" data-row="{{ $key }}">
-                                                    @if($currentStatus == 'Hadir') +5
-                                                    @elseif($currentStatus == 'Sakit') +3
-                                                    @elseif($currentStatus == 'Izin') +2
-                                                    @else 0
-                                                    @endif
-                                                </span>
                                             </td>
                                             <td class="align-middle">
                                                 <input type="text" name="absensi[{{ $key }}][keterangan]"
@@ -229,15 +214,6 @@ function setStatus(row, value) {
         }
     });
 
-    // Update poin badge
-    var badge = document.querySelector('.poin-badge[data-row="' + row + '"]');
-    if (badge) {
-        if (value === 'Hadir') badge.textContent = '+5';
-        else if (value === 'Sakit') badge.textContent = '+3';
-        else if (value === 'Izin') badge.textContent = '+2';
-        else badge.textContent = '0';
-    }
-
     updateCounters();
 }
 
@@ -254,9 +230,6 @@ function updateCounters() {
     document.getElementById('count-alfa').textContent = alfa;
     document.getElementById('count-izin').textContent = izin;
     document.getElementById('count-sakit').textContent = sakit;
-    
-    var totalPoin = (hadir * 5) + (sakit * 3) + (izin * 2);
-    document.getElementById('count-poin').textContent = totalPoin;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

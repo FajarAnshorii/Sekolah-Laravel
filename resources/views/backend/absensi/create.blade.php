@@ -74,7 +74,6 @@
                             Daftar Siswa — <span class="badge badge-light-primary">{{ $selected_kelas }}</span>
                             <span class="text-muted font-small-3 ml-50">{{ \Carbon\Carbon::parse($selected_tanggal)->translatedFormat('l, d F Y') }}</span>
                         </h4>
-                        <small class="text-muted">Siswa hadir mendapat <span class="badge badge-warning">+5 Poin</span></small>
                     </div>
                     <div class="d-flex align-items-center mt-1 mt-md-0">
                         {{-- Quick select buttons --}}
@@ -106,10 +105,6 @@
                             <span class="font-weight-bolder text-info font-medium-2" id="count-sakit">0</span>
                             <small class="d-block text-muted">Sakit</small>
                         </div>
-                        <div class="col">
-                            <span class="font-weight-bolder text-warning font-medium-2" id="count-poin">0</span>
-                            <small class="d-block text-muted">Total Poin</small>
-                        </div>
                     </div>
                 </div>
 
@@ -122,7 +117,6 @@
                                     <th>Nama Mahasiswa</th>
                                     <th>NIM</th>
                                     <th class="text-center" style="width:300px;">Status Kehadiran</th>
-                                    <th class="text-center" style="width:80px;">Poin</th>
                                     <th style="width:200px;">Keterangan</th>
                                 </tr>
                             </thead>
@@ -154,11 +148,6 @@
                                                     data-value="Sakit" style="font-size:11px;padding:3px 8px;">+ Sakit</button>
                                             </div>
                                             <input type="hidden" name="absensi[{{ $key }}][status]" id="status-{{ $key }}" value="{{ $currentStatus }}">
-                                        </td>
-                                        <td class="text-center align-middle">
-                                            <span class="badge badge-warning poin-badge" data-row="{{ $key }}">
-                                                {{ $currentStatus == 'Hadir' ? '+5' : '0' }}
-                                            </span>
                                         </td>
                                         <td class="align-middle">
                                             <input type="text" name="absensi[{{ $key }}][keterangan]"
@@ -222,10 +211,6 @@ function setStatus(row, value) {
         }
     });
 
-    // Update poin badge
-    var badge = document.querySelector('.poin-badge[data-row="' + row + '"]');
-    if (badge) badge.textContent = (value === 'Hadir') ? '+5' : '0';
-
     updateCounters();
 }
 
@@ -242,7 +227,6 @@ function updateCounters() {
     document.getElementById('count-alfa').textContent = alfa;
     document.getElementById('count-izin').textContent = izin;
     document.getElementById('count-sakit').textContent = sakit;
-    document.getElementById('count-poin').textContent = hadir * 5;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -224,6 +224,10 @@ Route::prefix('portal-mahasiswa')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Frontend\PortalMahasiswaController::class, 'dashboard'])->name('portal-mahasiswa.dashboard');
         Route::post('/logout', [App\Http\Controllers\Frontend\PortalMahasiswaController::class, 'logout'])->name('portal-mahasiswa.logout');
 
+        // Profile settings
+        Route::get('/profile', [App\Http\Controllers\Frontend\PortalMahasiswaController::class, 'showProfile'])->name('portal-mahasiswa.profile');
+        Route::put('/profile', [App\Http\Controllers\Frontend\PortalMahasiswaController::class, 'updateProfile'])->name('portal-mahasiswa.profile.update');
+
         // CRUD Achievement resources
         Route::resource('penghargaan', App\Http\Controllers\Frontend\PortalMahasiswa\PenghargaanController::class, ['names' => 'portal-mahasiswa.penghargaan']);
         Route::resource('sertifikat', App\Http\Controllers\Frontend\PortalMahasiswa\SertifikatController::class, ['names' => 'portal-mahasiswa.sertifikat']);

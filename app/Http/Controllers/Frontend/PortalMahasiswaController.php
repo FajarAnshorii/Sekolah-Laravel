@@ -133,6 +133,38 @@ class PortalMahasiswaController extends Controller
         return redirect()->route('portal-mahasiswa.login');
     }
 
+    public function showProfile()
+    {
+        $studentId = Session::get('portal_mahasiswa_id');
+        $student = Mahasiswa::findOrFail($studentId);
+        return view('frontend.portal-mahasiswa.profile', compact('student'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $studentId = Session::get('portal_mahasiswa_id');
+        $student = Mahasiswa::findOrFail($studentId);
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:mahasiswas,email,' . $studentId,
+            'no_hp' => 'nullable|string|max:20',
+            'nim' => 'required|string|max:50|unique:mahasiswas,nim,' . $studentId,
+        ]);
+
+        $student->nama = $request->nama;
+        $student->email = $request->email;
+        $student->no_hp = $request->no_hp;
+        $student->nim = $request->nim; // Updates NIM (which is used as the password)
+        $student->save();
+
+        // Update session name in case it changed
+        Session::put('portal_mahasiswa_nama', $student->nama);
+
+        Session::flash('success', 'Profil Anda berhasil diperbarui!');
+        return redirect()->route('portal-mahasiswa.dashboard');
+    }
+
     private function calculateSinglePoin($tingkat)
     {
         switch (strtolower(trim($tingkat))) {
