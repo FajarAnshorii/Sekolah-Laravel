@@ -263,7 +263,6 @@
                             
                             <div class="student-info">
                                 <h3 class="student-name" title="{{ $student->nama }}">{{ $student->nama }}</h3>
-                                <span class="student-nim">NIM: {{ $student->nim }}</span>
                                 <span class="student-class">{{ $student->kelas ?? 'Mahasiswa' }}</span>
                                 
                                 <div class="points-badge-wrapper">
@@ -304,7 +303,6 @@
                             
                             <div class="student-info">
                                 <h3 class="student-name">&nbsp;</h3>
-                                <span class="student-nim">&nbsp;</span>
                                 <span class="student-class" style="background: transparent; color: transparent; margin-bottom: 18px;">&nbsp;</span>
                                 
                                 <div class="points-badge-wrapper">
